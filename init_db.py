@@ -5,8 +5,6 @@ Reads sales_data.csv, splits it into three equal parts, and loads:
   - Part 1 (rows 0..99)   -> SQL only
   - Part 2 (rows 100..199)-> NoSQL only
   - Part 3 (rows 200..299)-> Both SQL and NoSQL  (replicated data)
-
-Run this once before starting the Streamlit app.
 """
 
 import sqlite3
@@ -21,11 +19,9 @@ NOSQL_FILE = "nosql_database.json"
 # ---- load the csv --------------------------------------------------------
 df = pd.read_csv(CSV_FILE)
 
-# add a simple integer id column if the csv doesn't have one already
 if "id" not in df.columns:
     df.insert(0, "id", range(1, len(df) + 1))
 
-# replace NaN with empty string so sqlite and tinydb don't complain
 df = df.fillna("")
 
 total = len(df)
@@ -45,7 +41,6 @@ if os.path.exists(NOSQL_FILE):
 conn = sqlite3.connect(SQL_FILE)
 cur  = conn.cursor()
 
-# build CREATE TABLE from the dataframe columns
 def sql_type(dtype):
     if pd.api.types.is_integer_dtype(dtype):
         return "INTEGER"
